@@ -9,5 +9,10 @@ STAT_MAP = {
     'passyards_stop': HOME_BASE + 6,
     'rusat': HOME_BASE + 6,
     'rusyds': HOME_BASE + 7,
-    'rustd': HOME_BASE + 8,
+    'rustd': HOME_BASE + 9,
+    'rec': HOME_BASE - 15,
+    'rectd': HOME_BASE - 12,
+    'recyds': HOME_BASE - 14,
+    'kr': HOME_BASE - 11,
+    'kryds': HOME_BASE - 10,
 }
