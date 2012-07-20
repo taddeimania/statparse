@@ -1,4 +1,4 @@
-from positions import QuarterBack, RunningBack, WideReceiver, TightEnd, Kicker
+from positions import QuarterBack, RunningBack, WideReceiver, TightEnd, Kicker, BasePosition
 
 stat_list = []
 
@@ -30,7 +30,6 @@ def set_stats(byte):
             stat_list.append(wr.get_stats())
         for i in range(1, 3):
             te = TightEnd(byte, i, team=side, home=home_side)
-            te.get_condition()
             stat_list.append(te.get_stats())
 
         k = Kicker(byte, team=side, home=home_side)
@@ -42,6 +41,9 @@ def set_stats(byte):
 def main():
     f = open("/home/jtaddei/1.nst", "rb")
     byte = f.read()
+    BasePosition.team_list = get_home_and_away(byte)
+    BasePosition.get_conditions(byte)
+    print BasePosition.condition_list
     set_stats(byte)
     print stat_list
 
