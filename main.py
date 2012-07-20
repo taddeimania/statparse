@@ -18,21 +18,17 @@ def print_stats(byte):
     home_side = True
     for side in game:
         for i in range(1, 3):
-            qb1 = QuarterBack(byte, i, home=home_side)
-            print "{},".format(side),
-            qb1.print_stats()
+            qb1 = QuarterBack(byte, i, team=side, home=home_side)
+            print qb1.get_stats()
         for i in range(1, 5):
-            rb = RunningBack(byte, i, home=home_side)
-            print "{},".format(side),
-            rb.print_stats()
+            rb = RunningBack(byte, i, team=side, home=home_side)
+            print rb.get_stats()
         for i in range(1, 5):
-            wr = WideReceiver(byte, i, home=home_side)
-            print "{},".format(side),
-            wr.print_stats()
+            wr = WideReceiver(byte, i, team=side, home=home_side)
+            print wr.get_stats()
         for i in range(1, 3):
-            te = TightEnd(byte, i, home=home_side)
-            print "{},".format(side),
-            te.print_stats()
+            te = TightEnd(byte, i, team=side, home=home_side)
+            print te.get_stats()
 #        for i in range(1, 3):
 #            k = Kicker(byte, i, home=home_side)
 #            print "{},".format(side),
