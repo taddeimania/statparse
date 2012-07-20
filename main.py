@@ -1,4 +1,6 @@
-from positions import QuarterBack, RunningBack, WideReceiver, TightEnd
+from positions import QuarterBack, RunningBack, WideReceiver, TightEnd, Kicker
+
+stat_list = []
 
 def get_home_and_away(byte):
     away = ""
@@ -12,35 +14,36 @@ def get_home_and_away(byte):
     return [home, away]
 
 
-def print_stats(byte):
+def set_stats(byte):
     game = get_home_and_away(byte)
 
     home_side = True
     for side in game:
         for i in range(1, 3):
             qb1 = QuarterBack(byte, i, team=side, home=home_side)
-            print qb1.get_stats()
+            stat_list.append(qb1.get_stats())
         for i in range(1, 5):
             rb = RunningBack(byte, i, team=side, home=home_side)
-            print rb.get_stats()
+            stat_list.append(rb.get_stats())
         for i in range(1, 5):
             wr = WideReceiver(byte, i, team=side, home=home_side)
-            print wr.get_stats()
+            stat_list.append(wr.get_stats())
         for i in range(1, 3):
             te = TightEnd(byte, i, team=side, home=home_side)
-            print te.get_stats()
-#        for i in range(1, 3):
-#            k = Kicker(byte, i, home=home_side)
-#            print "{},".format(side),
-#            k.print_stats()
+            te.get_condition()
+            stat_list.append(te.get_stats())
+
+        k = Kicker(byte, team=side, home=home_side)
+        stat_list.append(k.get_stats())
 
 
         home_side = False
 
 def main():
-    f = open("/home/jtaddei/3.nst", "rb")
+    f = open("/home/jtaddei/1.nst", "rb")
     byte = f.read()
-    print_stats(byte)
+    set_stats(byte)
+    print stat_list
 
 if __name__ == "__main__":
     main()

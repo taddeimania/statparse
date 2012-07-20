@@ -15,4 +15,10 @@ STAT_MAP = {
     'recyds': HOME_BASE - 14,
     'kr': HOME_BASE - 11,
     'kryds': HOME_BASE - 10,
+#    'krtd': HOME_BASE - 10,    can't find these
+#    'prtd': HOME_BASE - 10,    can't find these either
+    'xpa': 6016,    #not 100% sure on these, the a / v values could be flipped
+    'xpm': 6017,
+    'fga': 6018,
+    'fgm': 6019,
 }
