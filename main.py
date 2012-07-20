@@ -43,9 +43,9 @@ def main():
     byte = f.read()
     BasePosition.team_list = get_home_and_away(byte)
     BasePosition.get_conditions(byte)
-    print BasePosition.condition_list
     set_stats(byte)
-    print stat_list
+    for stats in stat_list:
+        print stats
 
 if __name__ == "__main__":
     main()

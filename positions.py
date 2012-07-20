@@ -94,7 +94,7 @@ class BasePosition(object):
 
     def get_player_condition(self):
         if self.pos == "K":
-            return "Who Cares"
+            return "Good"
         return conditions_dict[self.condition_list["{}{}".format(self.team, self.pos)]]
 
     @classmethod
