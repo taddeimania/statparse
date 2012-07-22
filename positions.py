@@ -1,5 +1,6 @@
 import struct
 from stat_map import STAT_MAP
+from status_parser import status_parser
 
 position_offset = {
     'QB': 0,
@@ -16,9 +17,15 @@ conditions_dict = {
     "00": "Bad",
 }
 
+injury_dict = {
+    "00": "OK",
+    "11": "Injured"
+}
+
 class BasePosition(object):
 
-    condition_list = {}
+    conditions = {}
+    injuries = {}
     team_list = []
     team = "Not Set"
     pos = "Not Set"
@@ -61,15 +68,17 @@ class BasePosition(object):
         self.recyds = struct.unpack('B', self.statfile[STAT_MAP['recyds'] + rec_offset])[0]
         self.kr = struct.unpack('B', self.statfile[STAT_MAP['kr'] + rec_offset])[0]
         self.kryds = struct.unpack('B', self.statfile[STAT_MAP['kryds'] + rec_offset])[0]
-        #self.krtd = struct.unpack('B', statfile[STAT_MAP['kryds'] + rec_offset])[0]
-        #self.prtd = struct.unpack('B', statfile[STAT_MAP['kryds'] + rec_offset])[0]
+        self.pr = struct.unpack('B', statfile[STAT_MAP['pr'] + rec_offset])[0]
+        self.pryds = struct.unpack('B', statfile[STAT_MAP['pryds'] + rec_offset])[0]
         self.xpa = 0
         self.xpm = 0
         self.fga = 0
         self.fgm = 0
 
+# idea format: TEAMPOS,WEEK,PA,PC,PASTD,INT,PSYD,REC,RECYDS,RECTD,KR,KRYD,KRTD,PR,PRYD,PRTD,RUSAT,RUSYDS,RUSTD,0,0,0,0,0,XPM,FGM,0,0,0,0,MYTEAM,OTHERTEAM,INJURY,STATUS
+
     def get_stats(self):
-        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(
+        return "{}{},1,{},{},{},{},{},{},{},{},{},{},{},{},{},X,{},{},X,{},{},{},{},{},{},{},{}".format(
             self.team,
             self.pos,
             self.passatt,
@@ -77,75 +86,64 @@ class BasePosition(object):
             self.passtd,
             self.passint,
             self.passyds,
+            self.rec,
+            self.recyds,
+            self.rectd,
             self.rusat,
             self.rusyds,
             self.rustd,
-            self.rec,
-            self.rectd,
-            self.recyds,
             self.kr,
             self.kryds,
+            self.pr,
+            self.pryds,
+            #add punt return tds, & kick return tds
             self.xpa,
             self.xpm,
             self.fga,
             self.fgm,
-            self.get_player_condition()
+            self.team,
+            self.get_player_condition(),
+            self.get_other_team(),
+            self.get_player_injury(),
         )
+
+    def get_other_team(self):
+        for team in self.team_list:
+            if self.team != team:
+                return team
 
     def get_player_condition(self):
         if self.pos == "K":
             return "Good"
-        return conditions_dict[self.condition_list["{}{}".format(self.team, self.pos)]]
+        return conditions_dict[self.conditions["{}{}".format(self.team, self.pos)]]
+
+    def get_player_injury(self):
+        if self.pos == "K":
+            return "OK"
+        return injury_dict[self.injuries["{}{}".format(self.team, self.pos)]]
+
+    @classmethod
+    def get_injuries(cls, file):
+        positions = ["QB1", "QB2", "RB1", "RB2", "RB3", "RB4", "WR1", "WR2", "WR3", "WR4", "TE1", "TE2"]
+        list_of_statuses = []
+        for x in range(6031, 6034):
+            list_of_statuses.append(bin(ord(file[x]))[2:])
+        for x in range(6292, 6295):
+            list_of_statuses.append(bin(ord(file[x]))[2:])
+
+        cls.injuries = status_parser(list_of_statuses, positions, cls.team_list)
+
 
     @classmethod
     def get_conditions(cls, file):
-        """ I don't normally comment or doc string but this method is going to confuse the crap
-            out of me the instant I walk away from the keyboard.
-
-            The objective of this method is to break each unsigned byte into it's 8 bit binary
-            string.  The challenge is that python seems to delete leading zero's so we need
-            to add them back in, then we need to break it into 2 bit chunks for analysis.
-        """
-        temp_list = []
-        bin_list = []
-        # create temp list of variable length binary strings
-        for x in range(6034, 6042):
-            temp_list.append(bin(ord(file[x]))[2:])
-        for x in range(6295, 6303):
-            temp_list.append(bin(ord(file[x]))[2:])
-
-        # find binary strings that have been chopped, add 0's back in
-        for item in temp_list:
-            length = len(item)
-            if len(item) < 8:
-                dif =  8 - length
-                item = "0" * dif + item
-            bin_list.append(item)
-
-        # break each string into 2 bits, create new entry in list for each chunk, these
-        # represent player conditions.
-        # 11 - Excellent
-        # 10 - Good
-        # 01 - Average
-        # 00 - Bad
         positions = ["QB1", "QB2", "RB1", "RB2", "RB3", "RB4", "WR1", "WR2", "WR3", "WR4", "TE1", "TE2", "C", "LG", "RG", "LT", "RT", "RE", "NT", "LE", "ROLB", "RILB", "LILB", "LOLB", "RCB", "LCB", "FS", "SS"]
-        i = 0
-        x = 0
-        team_list = cls.team_list
-        for byte in bin_list:
-            bit = 0
-            bit_interval = 2
-            while bit_interval < 9:
-                cls.condition_list['{}{}'.format(team_list[x], positions[i])] = (byte[bit:bit_interval])
-                bit += 2
-                bit_interval += 2
-                if i == (len(positions) - 1):
-                    i = 0
-                    if x == 1:
-                        break
-                    x += 1
-                else:
-                    i += 1
+        list_of_statuses = []
+        for x in range(6034, 6042):
+            list_of_statuses.append(bin(ord(file[x]))[2:])
+        for x in range(6295, 6303):
+            list_of_statuses.append(bin(ord(file[x]))[2:])
+
+        cls.conditions = status_parser(list_of_statuses, positions, cls.team_list)
 
 
 class QuarterBack(BasePosition):
@@ -161,6 +159,8 @@ class QuarterBack(BasePosition):
         self.recyds = 0
         self.kr = 0
         self.kryds = 0
+        self.pr = 0
+        self.pryds = 0
 
 class RunningBack(BasePosition):
 
@@ -204,6 +204,8 @@ class Kicker(BasePosition):
         self.recyds = 0
         self.kr = 0
         self.kryds = 0
+        self.pr = 0
+        self.pryds = 0
         #self.krtd = 0
         #self.prtd = 0
         self.xpa = struct.unpack('B', statfile[STAT_MAP['xpa'] + offset])[0]

@@ -42,6 +42,7 @@ def main():
     f = open("/home/jtaddei/1.nst", "rb")
     byte = f.read()
     BasePosition.team_list = get_home_and_away(byte)
+    BasePosition.get_injuries(byte)
     BasePosition.get_conditions(byte)
     set_stats(byte)
     for stats in stat_list:
