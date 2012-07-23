@@ -54,6 +54,7 @@ class BasePosition(object):
             base_offset += 261
             rec_offset += 261
 
+
         self.team = kwargs.get('team')
         self.passatt = struct.unpack('B', self.statfile[STAT_MAP['passatt'] + base_offset])[0]
         self.comp = struct.unpack('B', self.statfile[STAT_MAP['comp'] + base_offset])[0]
@@ -61,13 +62,14 @@ class BasePosition(object):
         self.passint = struct.unpack('B',  self.statfile[STAT_MAP['passint'] + base_offset])[0]
         self.passyds = struct.unpack('H', self.statfile[int(STAT_MAP['passyards_start'] + base_offset):int(STAT_MAP['passyards_stop'] + base_offset)])[0]
         self.rusat = struct.unpack('B', self.statfile[STAT_MAP['rusat'] + base_offset])[0]
-        self.rusyds = struct.unpack('B', self.statfile[STAT_MAP['rusyds'] + base_offset])[0]
+        self.rusyds = struct.unpack('H', self.statfile[int(STAT_MAP['rusyds_start'] + base_offset):int(STAT_MAP['rusyds_stop'] + base_offset)])[0]
         self.rustd = struct.unpack('B', self.statfile[STAT_MAP['rustd'] + base_offset])[0]
         self.rec = struct.unpack('B', self.statfile[STAT_MAP['rec'] + rec_offset])[0]
         self.rectd = struct.unpack('B', self.statfile[STAT_MAP['rectd'] + rec_offset])[0]
-        self.recyds = struct.unpack('B', self.statfile[STAT_MAP['recyds'] + rec_offset])[0]
+        self.recyds = struct.unpack('H', self.statfile[int(STAT_MAP['recyds_start'] + rec_offset):int(STAT_MAP['recyds_stop'] + rec_offset)])[0]
         self.kr = struct.unpack('B', self.statfile[STAT_MAP['kr'] + rec_offset])[0]
         self.kryds = struct.unpack('B', self.statfile[STAT_MAP['kryds'] + rec_offset])[0]
+        self.krtd = struct.unpack('B', self.statfile[STAT_MAP['krtd'] + rec_offset])[0]
         self.pr = struct.unpack('B', statfile[STAT_MAP['pr'] + rec_offset])[0]
         self.pryds = struct.unpack('B', statfile[STAT_MAP['pryds'] + rec_offset])[0]
         self.xpa = 0
@@ -75,7 +77,10 @@ class BasePosition(object):
         self.fga = 0
         self.fgm = 0
 
-# idea format: TEAMPOS,WEEK,PA,PC,PASTD,INT,PSYD,REC,RECYDS,RECTD,KR,KRYD,KRTD,PR,PRYD,PRTD,RUSAT,RUSYDS,RUSTD,0,0,0,0,0,XPM,FGM,0,0,0,0,MYTEAM,OTHERTEAM,INJURY,STATUS
+        if pos != 'QB':
+            self.zero_out_non_qb_stats()
+        else:
+            self.zero_out_stats_for_qb()
 
     def get_stats(self):
         return "{}{},1,{},{},{},{},{},{},{},{},{},{},{},{},{},X,{},{},X,{},{},{},{},{},{},{},{}".format(
@@ -145,15 +150,7 @@ class BasePosition(object):
 
         cls.conditions = status_parser(list_of_statuses, positions, cls.team_list)
 
-
-class QuarterBack(BasePosition):
-
-    def __init__(self, statfile, order, **kwargs):
-        self.pos = "QB{}".format(order)
-        super(QuarterBack, self).__init__(statfile, order, **kwargs)
-        self.zero_out_qb_stats()
-
-    def zero_out_qb_stats(self):
+    def zero_out_stats_for_qb(self):
         self.rec = 0
         self.rectd = 0
         self.recyds = 0
@@ -161,6 +158,20 @@ class QuarterBack(BasePosition):
         self.kryds = 0
         self.pr = 0
         self.pryds = 0
+
+    def zero_out_non_qb_stats(self):
+        self.passatt = 0
+        self.comp = 0
+        self.passtd = 0
+        self.passint = 0
+        self.passyds = 0
+
+class QuarterBack(BasePosition):
+
+    def __init__(self, statfile, order, **kwargs):
+        self.pos = "QB{}".format(order)
+        super(QuarterBack, self).__init__(statfile, order, **kwargs)
+
 
 class RunningBack(BasePosition):
 
