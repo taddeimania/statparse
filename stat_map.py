@@ -16,10 +16,13 @@ STAT_MAP = {
     'recyds_start': HOME_BASE - 14,
     'recyds_stop': HOME_BASE - 12,
     'kr': HOME_BASE - 11,
-    'kryds': HOME_BASE - 10,
-#    'krtd': HOME_BASE - 5,    #can't find these
+    'kryds_start': HOME_BASE - 10,
+    'kryds_stop': HOME_BASE - 8,
+    'krtd': HOME_BASE - 8,
     'pr': HOME_BASE - 7,
-    'pryds': HOME_BASE - 6,
+    'pryds_start': HOME_BASE - 6,
+    'pryds_stop': HOME_BASE - 4,
+    'prtd': HOME_BASE - 4,
 #    'prtd': HOME_BASE - 10,    can't find these either
     'xpa': 6016,    #not 100% sure on these, the a / v values could be flipped
     'xpm': 6017,

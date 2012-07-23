@@ -39,7 +39,7 @@ def set_stats(byte):
         home_side = False
 
 def main():
-    f = open("/home/jtaddei/okoyenuts.nst", "rb")
+    f = open("/home/jtaddei/1.nst", "rb")
     byte = f.read()
     BasePosition.team_list = get_home_and_away(byte)
     BasePosition.get_injuries(byte)
