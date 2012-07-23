@@ -1,5 +1,7 @@
+import os
 from positions import QuarterBack, RunningBack, WideReceiver, TightEnd, Kicker, BasePosition
 
+HOME_DIR = os.path.abspath(os.path.dirname(__file__))
 stat_list = []
 
 def get_home_and_away(byte):
@@ -39,7 +41,7 @@ def set_stats(byte):
         home_side = False
 
 def main():
-    f = open("/home/jtaddei/okoyenuts.nst", "rb")
+    f = open("{}/1.nst".format(HOME_DIR), "rb")
     byte = f.read()
     BasePosition.team_list = get_home_and_away(byte)
     BasePosition.get_injuries(byte)
