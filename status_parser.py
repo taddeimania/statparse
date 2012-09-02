@@ -16,7 +16,7 @@ class StatusParser(object):
     def pad_binary_string(self, binary_string):
         length = len(binary_string)
         if length < 8:
-            dif =  8 - length
+            dif = 8 - length
             binary_string = "0" * dif + binary_string
         return binary_string
 

@@ -23,8 +23,7 @@ STAT_MAP = {
     'pryds_start': HOME_BASE - 6,
     'pryds_stop': HOME_BASE - 4,
     'prtd': HOME_BASE - 4,
-#    'prtd': HOME_BASE - 10,    can't find these either
-    'xpa': 6016,    #not 100% sure on these, the a / v values could be flipped
+    'xpa': 6016,
     'xpm': 6017,
     'fga': 6018,
     'fgm': 6019,
