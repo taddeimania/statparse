@@ -3,10 +3,6 @@ from positions import positions
 
 HOME_DIR = os.path.abspath(os.path.dirname(__file__))
 stat_list = []
-team_dict = {
-    'DOLPHINS': 'MIA',
-    'BILLS': 'BUF',
-}
 
 def get_home_and_away(byte):
     away = ""
@@ -19,20 +15,9 @@ def get_home_and_away(byte):
 
     return [home, away]
 
-def get_long_home_and_away(byte):
-    away = ""
-    home = ""
-    for x in range(2734, 2744):
-        home += byte[x]
-
-    for x in range(2754, 2764):
-        away += byte[x]
-    home = home.split('\x00')[0]
-    away = away.split('\x00')[0]
-    return [home, away]
 
 def set_stats(byte):
-    game = get_long_home_and_away(byte)
+    game = get_home_and_away(byte)
 
     home_side = True
     for side in game:
@@ -56,10 +41,9 @@ def set_stats(byte):
         home_side = False
 
 def main():
-    f = open("/Users/jtaddei/Dropbox/in_progress2.nst", "rb")
-#    f = open("{}/1.nst".format(HOME_DIR), "rb")
+    f = open("{}/1.nst".format(HOME_DIR), "rb")
     byte = f.read()
-    positions.BasePosition.team_list = get_long_home_and_away(byte)
+    positions.BasePosition.team_list = get_home_and_away(byte)
     positions.BasePosition.get_injuries(byte)
     positions.BasePosition.get_conditions(byte)
     set_stats(byte)
