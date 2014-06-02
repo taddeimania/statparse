@@ -88,7 +88,7 @@ class BasePosition(object):
         self.fgm = struct.unpack('B', self.statfile[STAT_MAP['fgm'] + base_offset])[0]
 
     def get_stats(self):
-        return "{}{},1,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(
+        return "{}{},1,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(
             self.team,
             self.pos,
             self.passatt,
@@ -112,9 +112,7 @@ class BasePosition(object):
             self.xpm,
             self.fga,
             self.fgm,
-            self.team,
             self.get_player_condition(),
-            self.get_other_team(),
             self.get_player_injury(),
         )
 
@@ -152,9 +150,9 @@ class BasePosition(object):
     def get_conditions(cls, file):
         positions = ["QB1", "QB2", "RB1", "RB2", "RB3", "RB4", "WR1", "WR2", "WR3", "WR4", "TE1", "TE2", "C", "LG", "RG", "LT", "RT", "RE", "NT", "LE", "ROLB", "RILB", "LILB", "LOLB", "RCB", "LCB", "FS", "SS"]
         list_of_statuses = []
-        for x in range(6034, 6042):
+        for x in range(6403, 6421):
             list_of_statuses.append(bin(ord(file[x]))[2:])
-        for x in range(6295, 6303):
+        for x in range(6664, 6672):
             list_of_statuses.append(bin(ord(file[x]))[2:])
 
         conditions = StatusParser(list_of_statuses, cls.team_list, positions, file)

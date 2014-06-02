@@ -7,10 +7,10 @@ stat_list = []
 def get_home_and_away(byte):
     away = ""
     home = ""
-    for x in range(3087, 3090):
+    for x in range(2629, 2632):
         home += byte[x]
 
-    for x in range(3119, 3122):
+    for x in range(2661, 2664):
         away += byte[x]
 
     return [home, away]
@@ -41,7 +41,7 @@ def set_stats(byte):
         home_side = False
 
 def main():
-    f = open("{}/1.nst".format(HOME_DIR), "rb")
+    f = open("{}/1.jat".format(HOME_DIR), "rb")
     byte = f.read()
     positions.BasePosition.team_list = get_home_and_away(byte)
     positions.BasePosition.get_injuries(byte)

@@ -1,4 +1,4 @@
-HOME_BASE = 5781
+HOME_BASE = 6150
 
 STAT_MAP = {
     'passatt': HOME_BASE,
@@ -23,8 +23,8 @@ STAT_MAP = {
     'pryds_start': HOME_BASE - 6,
     'pryds_stop': HOME_BASE - 4,
     'prtd': HOME_BASE - 4,
-    'xpa': 6016,
-    'xpm': 6017,
-    'fga': 6018,
-    'fgm': 6019,
+    'xpa': 6385,
+    'xpm': 6386,
+    'fga': 6387,
+    'fgm': 6388,
 }
