@@ -1,5 +1,5 @@
 import os
-from positions.positions import get_stats, get_injuries, get_conditions, clean_stats, Player
+from positions.positions import get_stats, get_injuries, get_conditions, clean_stats
 
 HOME_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -35,7 +35,6 @@ def set_stats(byte, team_list, conditions, injuries):
             rb_stats = clean_stats(exclude, get_stats(rb, conditions, injuries, byte))
             stat_list.append(rb_stats)
         for i in range(1, 5):
-            wr = Player(i, "WR", team=side, home=home_side)
             wr = {"order": i, "pos": "WR", "team": side, "home": home_side}
             wr_stats = clean_stats(exclude, get_stats(wr, conditions, injuries, byte))
             stat_list.append(wr_stats)

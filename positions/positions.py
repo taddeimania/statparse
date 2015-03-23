@@ -42,6 +42,7 @@ def get_offsets(player):
     if not player['home']:
         base_offset += 261
         rec_offset += 261
+    print base_offset, rec_offset, player['pos']
     return base_offset, rec_offset
 
 
