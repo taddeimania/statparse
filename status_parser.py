@@ -7,6 +7,8 @@ class StatusParser(object):
         self.file = file
         self.binary_strings = []
         self.condition_list = {}
+        self.set_binary_strings()
+        self.set_condition_on_player_position()
 
     def set_binary_strings(self):
         for binary_string in self.statuses:

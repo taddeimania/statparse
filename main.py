@@ -1,8 +1,13 @@
 import os
-from positions import positions
+from positions.positions import get_stats, get_injuries, get_conditions, clean_stats, Player
 
 HOME_DIR = os.path.abspath(os.path.dirname(__file__))
-stat_list = []
+
+qb_exclude = ["rec", "rectd", "recyds", "kr", "kryds", "krtd", "pr", "pryds", "prtd", "xpa", "xpm", "fgm", "fga"]
+k_exclude = ["passatt", "comp", "passtd", "passint", "passyds", "rusat", "rusyds", "rustd", "rec", "rectd", "recyds",
+             "kr", "kryds", "pr", "pryds", "krtd", "prtd"]
+exclude = ["passatt", "comp", "passtd", "passint", "passyds", "xpa", "xpm", "fgm", "fga"]
+
 
 def get_home_and_away(byte):
     away = ""
@@ -16,37 +21,44 @@ def get_home_and_away(byte):
     return [home, away]
 
 
-def set_stats(byte):
-    game = get_home_and_away(byte)
+def set_stats(byte, team_list, conditions, injuries):
+    stat_list = []
 
     home_side = True
-    for side in game:
+    for side in team_list:
         for i in range(1, 3):
-            qb1 = positions.QuarterBack(byte, i, team=side, home=home_side)
-            stat_list.append(qb1.get_stats())
+            qb1 = {"order": i, "pos": "QB", "team": side, "home": home_side}
+            qb_stats = clean_stats(qb_exclude, get_stats(qb1, conditions, injuries, byte))
+            stat_list.append(qb_stats)
         for i in range(1, 5):
-            rb = positions.RunningBack(byte, i, team=side, home=home_side)
-            stat_list.append(rb.get_stats())
+            rb = {"order": i, "pos": "RB", "team": side, "home": home_side}
+            rb_stats = clean_stats(exclude, get_stats(rb, conditions, injuries, byte))
+            stat_list.append(rb_stats)
         for i in range(1, 5):
-            wr = positions.WideReceiver(byte, i, team=side, home=home_side)
-            stat_list.append(wr.get_stats())
+            wr = Player(i, "WR", team=side, home=home_side)
+            wr = {"order": i, "pos": "WR", "team": side, "home": home_side}
+            wr_stats = clean_stats(exclude, get_stats(wr, conditions, injuries, byte))
+            stat_list.append(wr_stats)
         for i in range(1, 3):
-            te = positions.TightEnd(byte, i, team=side, home=home_side)
-            stat_list.append(te.get_stats())
+            te = {"order": i, "pos": "TE", "team": side, "home": home_side}
+            te_stats = clean_stats(exclude, get_stats(te, conditions, injuries, byte))
+            stat_list.append(te_stats)
 
-        k = positions.Kicker(byte, team=side, home=home_side)
-        stat_list.append(k.get_stats())
-
+        k = {"order": i, "pos": "K", "team": side, "home": home_side}
+        k_stats = clean_stats(k_exclude, get_stats(k, conditions, injuries, byte))
+        stat_list.append(k_stats)
 
         home_side = False
+    return stat_list
+
 
 def main():
-    f = open("{}/1.jat".format(HOME_DIR), "rb")
-    byte = f.read()
-    positions.BasePosition.team_list = get_home_and_away(byte)
-    positions.BasePosition.get_injuries(byte)
-    positions.BasePosition.get_conditions(byte)
-    set_stats(byte)
+    with open("{}/1.jat".format(HOME_DIR), "rb") as f:
+        byte = f.read()
+    team_list = get_home_and_away(byte)
+    injuries = get_injuries(byte, team_list)
+    conditions = get_conditions(byte, team_list)
+    stat_list = set_stats(byte, team_list, conditions, injuries)
     for stats in stat_list:
         print stats
 
